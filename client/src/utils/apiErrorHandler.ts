@@ -1,17 +1,17 @@
 import { AxiosError } from "axios";
+import { ApiResponse } from "../types/ApiRespose";
 
-const handleApiError = (e: unknown) => {
+const handleApiError = <T>(e: unknown): ApiResponse<T> => {
     if (e instanceof AxiosError && e.response) {
         return {
             success: false,
+            error: e.response.data.error,
             message: e.response.data.message || "Request failed",
-            statusCode: e.response.status,
         };
     }
     return {
         success: false,
         message: "An unexpected error occurred.",
-        statusCode: 500,
     };
 };
 

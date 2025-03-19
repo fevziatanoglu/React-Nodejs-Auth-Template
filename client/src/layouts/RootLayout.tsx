@@ -16,7 +16,6 @@ const RootLayout: React.FC = () => {
                 setLoading(false);
             }
         };
-
         checkAuth();
     }, [navigate, refreshToken]);
 

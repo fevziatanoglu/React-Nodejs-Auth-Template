@@ -1,8 +1,10 @@
 import { StateCreator } from "zustand";
 import User from "../../types/User";
 import { login, logout, refresh, register } from "../../api/authService";
-import { LoginFormValues } from "../../pages/auth/Login";
-import { RegisterFormValues } from "../../pages/auth/Register";
+
+import { ApiResponse } from "../../types/ApiRespose";
+import { LoginData } from "../../types/LoginData";
+import { LoginFormValues, RegisterFormValues } from "../../validations/authSchema";
 
 export interface AuthState {
     user: User | null;
@@ -11,9 +13,9 @@ export interface AuthState {
 };
 
 export interface AuthActions {
-    loginFetch: (credential: LoginFormValues) => Promise<void>;
-    registerFetch: (credential: RegisterFormValues) => Promise<void>;
-    refreshToken: () => Promise<void>;
+    loginFetch: (credential: LoginFormValues) => Promise<ApiResponse<LoginData>>;
+    registerFetch: (credential: RegisterFormValues) => Promise<ApiResponse<LoginData>>;
+    refreshToken: () => Promise<ApiResponse<LoginData>>;
     logoutFetch: () => void;
 };
 
@@ -28,36 +30,32 @@ export const createAuthSlice: StateCreator<AuthState & AuthActions> = (
             if (response.success) {
                 set({ token: response.data?.token, user: response.data?.user, isAuthenticated: true })
                 window.location.href = "/";
-                return response
-            } else {
-                return response
             }
+            return response
 
         },
 
         refreshToken: async () => {
             const response = await refresh();
-            if (response.success) {
-                set({ token: response.token, user: response.user, isAuthenticated: true });
+            if (response.success && response.data) {
+                set({ token: response.data.token, user: response.data.user, isAuthenticated: true });
             } else {
                 set({ token: null, user: null, isAuthenticated: false });
             }
+            return response
         },
 
         registerFetch: async (credential: RegisterFormValues) => {
             const response = await register(credential)
-            if (response.success) {
-                set({ token: response.data?.token, user: response.data?.user, isAuthenticated: true })
+            if (response.success && response.data) {
+                set({ token: response.data.token, user: response.data.user, isAuthenticated: true })
                 window.location.href = "/";
-                return response
-            } else {
-                return response
             }
+            return response
         },
 
         logoutFetch: async () => {
             const response = await logout();
-            console.log(response)
             if (response.success) {
                 set({ token: null, isAuthenticated: false, user: null });
                 window.location.href = "/login";

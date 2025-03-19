@@ -1,15 +1,9 @@
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import useStore from '../../store';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { RegisterFormValues, registerSchema } from '../../validations/authSchema';
 
-const registerSchema = z.object({
-    email: z.string().email('Geçerli bir e-posta giriniz'),
-    username: z.string().min(3, 'Kullanıcı adı en az 3 karakter olmalıdır'),
-    password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
-});
 
-export type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function Register() {
     const { registerFetch } = useStore();
@@ -38,13 +32,13 @@ export default function Register() {
 
 
             <div>
-                <label>Şifre</label>
+                <label>Password</label>
                 <input type="password" {...register('password')} className="border p-2 w-full" />
                 {errors.password && <p className="text-red-500">{errors.password.message}</p>}
             </div>
 
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                Kayıt Ol
+                Sign Up
             </button>
         </form>
     );

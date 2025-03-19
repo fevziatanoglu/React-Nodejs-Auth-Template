@@ -1,14 +1,9 @@
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import useStore from '../../store';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginFormValues, loginSchema } from '../../validations/authSchema';
 
-const loginSchema = z.object({
-    email: z.string().email('Geçerli bir e-posta giriniz'),
-    password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
-});
 
-export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
     const { loginFetch } = useStore();
@@ -30,13 +25,13 @@ export default function Login() {
             </div>
 
             <div>
-                <label>Şifre</label>
+                <label>Password</label>
                 <input type="password" {...register('password')} className="border p-2 w-full" />
                 {errors.password && <p className="text-red-500">{errors.password.message}</p>}
             </div>
 
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                Giriş Yap
+                Sign In
             </button>
         </form>
     );
